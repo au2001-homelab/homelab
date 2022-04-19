@@ -4,7 +4,8 @@ metadata:
   name: k0s-cluster
 spec:
   hosts:
-  - ssh:
+  - privateAddress: 10.113.0.1
+    ssh:
       address: 141.94.247.134
       user: debian
       port: 22
@@ -12,7 +13,8 @@ spec:
     role: controller+worker
     installFlags:
     - --no-taints
-  - ssh:
+  - privateAddress: 10.113.0.2
+    ssh:
       address: 141.94.245.17
       user: debian
       port: 22

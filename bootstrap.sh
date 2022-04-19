@@ -11,6 +11,8 @@ if [ -d "/usr/local/share/zsh/site-functions/" ]; then
 fi
 
 k0sctl init -u debian -i ~/.ssh/id_rsa_k8s_arlsh --k0s 141.94.247.134 141.94.245.17 > k0sctl.yaml
+awk -i inplace -v RS= '{print gensub(/\n(\s*)- (ssh:\n\s*address: 141.94.247.134)/,"\n\\1- privateAddress: 10.113.0.1\n\\1  \\2","g");}' k0sctl.yaml
+awk -i inplace -v RS= '{print gensub(/\n(\s*)- (ssh:\n\s*address: 141.94.245.17)/,"\n\\1- privateAddress: 10.113.0.2\n\\1  \\2","g");}' k0sctl.yaml
 sed -i -E 's/^(\s*)(role:) (controller|worker|controller\+worker)$/\1\2 controller+worker\n\1installFlags:\n\1- --no-taints/g' k0sctl.yaml
 awk -i inplace -v RS= '{print gensub(/(\s*telemetry:\n\s*enabled:) true/,"\\1 false","g");}' k0sctl.yaml
 
@@ -33,4 +35,4 @@ if [ -d "/usr/local/share/zsh/site-functions/" ]; then
         flux completion zsh | sudo tee /usr/local/share/zsh/site-functions/_flux > /dev/null
 fi
 
-flux bootstrap git --url=ssh://git@github.com/arl-sh/flux-k8s.git --private-key-file=id_ed25519 --silent --path=cluster --components-extra=image-reflector-controller,image-automation-controller
+flux bootstrap git --url=ssh://git@github.com/arl-sh/k8s-flux.git --private-key-file=id_ed25519 --silent --path=cluster --components-extra=image-reflector-controller,image-automation-controller
