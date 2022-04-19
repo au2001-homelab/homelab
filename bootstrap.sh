@@ -17,9 +17,6 @@ yq -i '.spec.hosts[].role = "controller+worker"' k0sctl.yaml
 yq -i '.spec.hosts[].installFlags = ["--no-taints"]' k0sctl.yaml
 yq -i '.spec.hosts[].privateInterface = "ens3"' k0sctl.yaml
 yq -i '.spec.k0s.config.spec.network.kubeProxy.mode = "ipvs"' k0sctl.yaml
-yq -i '.spec.k0s.config.spec.network.kuberouter = null' k0sctl.yaml
-yq -i '.spec.k0s.config.spec.network.provider = "calico"' k0sctl.yaml
-yq -i '.spec.k0s.config.spec.network.calico = {"mode": "vxlan", "overlay": "CrossSubnet", "wireguard": true, "ipAutodetectionMethod": "interface=ens\d+"}' k0sctl.yaml
 yq -i '.spec.k0s.config.spec.telemetry.enabled = false' k0sctl.yaml
 
 k0sctl apply -c k0sctl.yaml
