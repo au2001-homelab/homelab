@@ -10,11 +10,17 @@ if [ -d "/usr/local/share/zsh/site-functions/" ]; then
 	k0sctl completion | sudo tee /usr/local/share/zsh/site-functions/_k0sctl > /dev/null
 fi
 
+brew install yq
+
 k0sctl init -u debian -i ~/.ssh/id_rsa_k8s_arlsh --k0s 141.94.247.134 141.94.245.17 > k0sctl.yaml
-awk -i inplace -v RS= '{print gensub(/\n(\s*)- (ssh:\n\s*address: 141.94.247.134)/,"\n\\1- privateAddress: 10.113.0.1\n\\1  \\2","g");}' k0sctl.yaml
-awk -i inplace -v RS= '{print gensub(/\n(\s*)- (ssh:\n\s*address: 141.94.245.17)/,"\n\\1- privateAddress: 10.113.0.2\n\\1  \\2","g");}' k0sctl.yaml
-sed -i -E 's/^(\s*)(role:) (controller|worker|controller\+worker)$/\1\2 controller+worker\n\1installFlags:\n\1- --no-taints/g' k0sctl.yaml
-awk -i inplace -v RS= '{print gensub(/(\s*telemetry:\n\s*enabled:) true/,"\\1 false","g");}' k0sctl.yaml
+yq -i '.spec.hosts[].role = "controller+worker"' k0sctl.yaml
+yq -i '.spec.hosts[].installFlags = ["--no-taints"]' k0sctl.yaml
+yq -i '.spec.hosts[].privateInterface = "ens3"' k0sctl.yaml
+yq -i '.spec.k0s.config.spec.network.kubeProxy.mode = "ipvs"' k0sctl.yaml
+yq -i '.spec.k0s.config.spec.network.kuberouter = null' k0sctl.yaml
+yq -i '.spec.k0s.config.spec.network.provider = "calico"' k0sctl.yaml
+yq -i '.spec.k0s.config.spec.network.calico = {"mode": "vxlan", "overlay": "CrossSubnet", "wireguard": true, "ipAutodetectionMethod": "interface=ens\d+"}' k0sctl.yaml
+yq -i '.spec.k0s.config.spec.telemetry.enabled = false' k0sctl.yaml
 
 k0sctl apply -c k0sctl.yaml
 
