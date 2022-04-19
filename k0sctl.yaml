@@ -78,15 +78,14 @@ spec:
           kubeProxy:
             disabled: false
             mode: ipvs
-          kuberouter: null
+          kuberouter:
+            autoMTU: true
+            mtu: 0
+            peerRouterASNs: ""
+            peerRouterIPs: ""
           podCIDR: 10.244.0.0/16
-          provider: calico
+          provider: kuberouter
           serviceCIDR: 10.96.0.0/12
-          calico:
-            mode: vxlan
-            overlay: CrossSubnet
-            wireguard: false
-            ipAutodetectionMethod: interface=ens\d+
         podSecurityPolicy:
           defaultPolicy: 00-k0s-privileged
         storage:
