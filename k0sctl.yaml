@@ -4,24 +4,24 @@ metadata:
   name: k0s-cluster
 spec:
   hosts:
-  - privateAddress: 10.113.0.1
-    ssh:
-      address: 141.94.247.134
-      user: debian
-      port: 22
-      keyPath: /home/aurel/.ssh/id_rsa_k8s_arlsh
-    role: controller+worker
-    installFlags:
-    - --no-taints
-  - privateAddress: 10.113.0.2
-    ssh:
-      address: 141.94.245.17
-      user: debian
-      port: 22
-      keyPath: /home/aurel/.ssh/id_rsa_k8s_arlsh
-    role: controller+worker
-    installFlags:
-    - --no-taints
+    - ssh:
+        address: 141.94.247.134
+        user: debian
+        port: 22
+        keyPath: /home/aurel/.ssh/id_rsa_k8s_arlsh
+      role: controller+worker
+      installFlags:
+        - --no-taints
+      privateInterface: ens3
+    - ssh:
+        address: 141.94.245.17
+        user: debian
+        port: 22
+        keyPath: /home/aurel/.ssh/id_rsa_k8s_arlsh
+      role: controller+worker
+      installFlags:
+        - --no-taints
+      privateInterface: ens3
   k0s:
     version: 1.23.5+k0s.0
     config:
@@ -77,15 +77,16 @@ spec:
         network:
           kubeProxy:
             disabled: false
-            mode: iptables
-          kuberouter:
-            autoMTU: true
-            mtu: 0
-            peerRouterASNs: ""
-            peerRouterIPs: ""
+            mode: ipvs
+          kuberouter: null
           podCIDR: 10.244.0.0/16
-          provider: kuberouter
+          provider: calico
           serviceCIDR: 10.96.0.0/12
+          calico:
+            mode: vxlan
+            overlay: CrossSubnet
+            wireguard: false
+            ipAutodetectionMethod: interface=ens\d+
         podSecurityPolicy:
           defaultPolicy: 00-k0s-privileged
         storage:
