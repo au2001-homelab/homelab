@@ -5,17 +5,21 @@ metadata:
 spec:
   hosts:
   - ssh:
-      address: 141.94.245.17
-      user: debian
-      port: 22
-      keyPath: /home/aurel/.ssh/id_rsa_k8s_arlsh
-    role: controller+worker
-  - ssh:
       address: 141.94.247.134
       user: debian
       port: 22
       keyPath: /home/aurel/.ssh/id_rsa_k8s_arlsh
     role: controller+worker
+    installFlags:
+    - --no-taints
+  - ssh:
+      address: 141.94.245.17
+      user: debian
+      port: 22
+      keyPath: /home/aurel/.ssh/id_rsa_k8s_arlsh
+    role: controller+worker
+    installFlags:
+    - --no-taints
   k0s:
     version: 1.23.5+k0s.0
     config:
