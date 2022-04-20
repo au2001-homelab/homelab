@@ -12,10 +12,10 @@ fi
 
 brew install yq
 
-k0sctl init -u debian -i ~/.ssh/id_rsa_k8s_arlsh --k0s 141.94.247.134 141.94.245.17 > k0sctl.yaml
+k0sctl init -u debian -i ~/.ssh/id_rsa_k8s --k0s 141.94.247.134 141.94.245.17 > k0sctl.yaml
 yq -i '.spec.hosts[].role = "controller+worker"' k0sctl.yaml
 yq -i '.spec.hosts[].installFlags = ["--no-taints"]' k0sctl.yaml
-yq -i '.spec.hosts[].privateInterface = "ens3"' k0sctl.yaml
+yq -i '.spec.hosts[].privateInterface = "tincvpn"' k0sctl.yaml
 yq -i '.spec.k0s.config.spec.network.kubeProxy.mode = "ipvs"' k0sctl.yaml
 yq -i '.spec.k0s.config.spec.telemetry.enabled = false' k0sctl.yaml
 

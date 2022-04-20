@@ -12,7 +12,7 @@ spec:
       role: controller+worker
       installFlags:
         - --no-taints
-      privateInterface: ens3
+      privateInterface: tincvpn
     - ssh:
         address: 141.94.245.17
         user: debian
@@ -21,7 +21,7 @@ spec:
       role: controller+worker
       installFlags:
         - --no-taints
-      privateInterface: ens3
+      privateInterface: tincvpn
   k0s:
     version: 1.23.5+k0s.0
     config:
