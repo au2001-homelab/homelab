@@ -23,7 +23,7 @@ yq -i '.spec.k0s.config.spec.telemetry.enabled = false' k0sctl.yaml
 
 k0sctl apply -c k0sctl.yaml
 
-k0sctl kubeconfig -c k0sctl.yaml --address https://k8s.arl.sh:6443 > kubeconfig.yaml
+k0sctl kubeconfig -c k0sctl.yaml > kubeconfig.yaml
 mkdir -p ~/.kube
 KUBECONFIG=kubeconfig.yaml:~/.kube/config kubectl config view --flatten > .kubeconfig
 mv .kubeconfig ~/.kube/config
