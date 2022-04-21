@@ -16,12 +16,14 @@ k0sctl init -u debian -i ~/.ssh/id_rsa_k8s --k0s 141.94.247.134 141.94.245.17 > 
 yq -i '.spec.hosts[].role = "controller+worker"' k0sctl.yaml
 yq -i '.spec.hosts[].installFlags = ["--no-taints"]' k0sctl.yaml
 yq -i '.spec.hosts[].privateInterface = "tincvpn"' k0sctl.yaml
+yq -i '.spec.k0s.config.spec.api.externalAddress = "k8s.arl.sh"' k0sctl.yaml
+yq -i '.spec.k0s.config.spec.api.sans = ["k8s.arl.sh", "001.k8s.arl.sh", "002.k8s.arl.sh"]' k0sctl.yaml
 yq -i '.spec.k0s.config.spec.network.kubeProxy.mode = "ipvs"' k0sctl.yaml
 yq -i '.spec.k0s.config.spec.telemetry.enabled = false' k0sctl.yaml
 
 k0sctl apply -c k0sctl.yaml
 
-k0sctl kubeconfig -c k0sctl.yaml --address https://141.94.247.134:6443 > kubeconfig.yaml
+k0sctl kubeconfig -c k0sctl.yaml --address https://k8s.arl.sh:6443 > kubeconfig.yaml
 mkdir -p ~/.kube
 KUBECONFIG=kubeconfig.yaml:~/.kube/config kubectl config view --flatten > .kubeconfig
 mv .kubeconfig ~/.kube/config
