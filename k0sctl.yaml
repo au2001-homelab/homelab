@@ -8,7 +8,7 @@ spec:
         address: 141.94.247.134
         user: debian
         port: 22
-        keyPath: /home/aurel/.ssh/id_rsa_k8s_arlsh
+        keyPath: /home/aurel/.ssh/id_rsa_k8s
       role: controller+worker
       installFlags:
         - --no-taints
@@ -17,7 +17,7 @@ spec:
         address: 141.94.245.17
         user: debian
         port: 22
-        keyPath: /home/aurel/.ssh/id_rsa_k8s_arlsh
+        keyPath: /home/aurel/.ssh/id_rsa_k8s
       role: controller+worker
       installFlags:
         - --no-taints
@@ -33,6 +33,11 @@ spec:
         api:
           k0sApiPort: 9443
           port: 6443
+          externalAddress: k8s.arl.sh
+          sans:
+            - k8s.arl.sh
+            - 001.k8s.arl.sh
+            - 002.k8s.arl.sh
         images:
           calico:
             cni:
