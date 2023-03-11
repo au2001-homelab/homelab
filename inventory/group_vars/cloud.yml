@@ -1,0 +1,5 @@
+---
+install_k3s_server_args:
+  --node-label k8s.arl.sh/cpu=intel-atom-n2800
+  --node-label k8s.arl.sh/bandwidth-up=100
+  --node-label k8s.arl.sh/bandwidth-down=100
