@@ -1,0 +1,3 @@
+[submodule "k3s-ansible"]
+	path = k3s-ansible
+	url = git@github.com:arl-sh/k3s-ansible.git
