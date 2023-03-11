@@ -1,0 +1,3 @@
+---
+- import_playbook: ./desktop.yml
+- import_playbook: ../k3s-ansible/playbook/site.yml

@@ -1,0 +1,30 @@
+---
+- name: Configure machines
+  hosts: selfhosted
+  tasks:
+  - name: Install iptables
+    become: true
+    apt:
+      name: iptables
+
+  - name: Disable SSH password authentication
+    become: true
+    lineinfile:
+      dest: /etc/ssh/sshd_config
+      regexp: '^#?\s*PasswordAuthentication\b(.*)$'
+      line: "PasswordAuthentication no"
+      state: present
+    notify:
+    - Reload sshd
+
+  - name: Set hostname
+    become: true
+    hostname:
+      name: "{{ ansible_host }}"
+
+  handlers:
+  - name: Reload sshd
+    become: true
+    service:
+      name: sshd
+      state: reloaded
