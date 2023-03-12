@@ -1,0 +1,33 @@
+---
+- name: Install Flux
+  hosts: localhost
+  tasks:
+  - name: Install Flux CLI
+    homebrew:
+      update_homebrew: true
+      name: fluxcd/tap/flux
+      state: latest
+
+  - name: Create temporary private key
+    copy:
+      content: "{{ flux_git_private_key }}"
+      dest: flux_git_private_key.tmp
+      mode: "400"
+    changed_when: false
+
+  - name: Bootstrap Flux
+    command:
+      flux bootstrap git
+        --kubeconfig=../k3s-ansible/playbook/{{ cluster_config }}
+        --url={{ flux_git_url }}
+        --private-key-file=flux_git_private_key.tmp
+        --silent
+        --path={{ flux_path }}
+        --components-extra=image-reflector-controller,image-automation-controller
+        --interval {{ flux_interval }}
+
+  - name: Delete temporary private key
+    file:
+      path: flux_git_private_key.tmp
+      state: absent
+    changed_when: false
