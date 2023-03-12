@@ -1,0 +1,7 @@
+---
+install_k3s_agent_args:
+  --node-taint k8s.arl.sh/public=false:NoSchedule
+  --node-label k8s.arl.sh/type=nas
+  --node-label k8s.arl.sh/cpu=intel-core-i7-10700k
+  --node-label k8s.arl.sh/bandwidth-up=700
+  --node-label k8s.arl.sh/bandwidth-down=10000
