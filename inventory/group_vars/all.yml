@@ -1,5 +1,6 @@
 ---
 ansible_user: debian
+cluster_config: cluster.conf
 
 ha_enabled: true
 ha_cluster_method: external
