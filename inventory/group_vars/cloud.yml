@@ -1,5 +1,6 @@
 ---
 install_k3s_server_args:
+  --disable traefik
   --node-label k8s.arl.sh/type=cloud
   --node-label k8s.arl.sh/cloud=ovh
   --node-label k8s.arl.sh/cpu=intel-atom-n2800

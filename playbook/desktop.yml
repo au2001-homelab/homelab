@@ -1,4 +1,11 @@
 ---
+- name: Install dependencies
+  hosts: selfhosted
+  gather_facts: false
+  tasks:
+  - name: Install Python3
+    raw: sudo apt-get install -y python3
+
 - name: Configure machines
   hosts: selfhosted
   tasks:

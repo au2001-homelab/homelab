@@ -2,13 +2,26 @@
 - name: Install Flux
   hosts: localhost
   tasks:
+  - name: Create SOPS secret
+    kubernetes.core.k8s:
+      kubeconfig: ../k3s-ansible/playbook/{{ cluster_config }}
+      definition:
+        apiVersion: v1
+        kind: Secret
+        metadata:
+          name: sops-gpg
+          namespace: flux-system
+        type: Opaque
+        data:
+          sops.asc: "{{ flux_sops_private_key | b64encode }}"
+
   - name: Install Flux CLI
     homebrew:
       update_homebrew: true
       name: fluxcd/tap/flux
       state: latest
 
-  - name: Create temporary private key
+  - name: Write temporary private key
     copy:
       content: "{{ flux_git_private_key }}"
       dest: flux_git_private_key.tmp
@@ -26,7 +39,7 @@
         --components-extra=image-reflector-controller,image-automation-controller
         --interval {{ flux_interval }}
 
-  - name: Delete temporary private key
+  - name: Wipe temporary private key
     file:
       path: flux_git_private_key.tmp
       state: absent
