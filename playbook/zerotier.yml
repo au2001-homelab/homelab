@@ -1,0 +1,40 @@
+---
+- name: Connect to ZeroTier
+  hosts: k3s_cluster
+  become: true
+  tasks:
+  - name: Download install script
+    get_url:
+      url: https://install.zerotier.com
+      dest: ./zerotier_install.sh
+
+  - name: Run install script
+    command: sh ./zerotier_install.sh
+
+  - name: Delete install script
+    file:
+      path: ./zerotier_install.sh
+      state: absent
+
+  - name: Fetch public identity file
+    slurp:
+      src: /var/lib/zerotier-one/identity.public
+    register: zerotier_identity
+
+  - name: Display public identity
+    debug:
+      msg: "{{ (zerotier_identity.content | b64decode).split(':', 1)[0] }}"
+
+  - name: Join network
+    command: zerotier-cli join {{ zerotier_network_id }}
+
+  - name: Wait for approval
+    command: zerotier-cli get {{ zerotier_network_id }} ip4
+    register: zerotier_info
+    until: zerotier_info.stdout != '' and (zerotier_info.stdout | ansible.utils.ipaddr)
+    retries: 60
+    delay: 10
+
+  - name: Get IP address
+    set_fact:
+      zerotier_ipv4: "{{ zerotier_info.stdout | ansible.utils.ipaddr }}"

@@ -1,5 +1,6 @@
 ---
 install_k3s_agent_args:
+  --node-ip {{ zerotier_ipv4 }}
   --node-taint k8s.arl.sh/public=false:NoSchedule
   --node-taint k8s.arl.sh/preemptible=true:NoSchedule
   --node-label k8s.arl.sh/type=selfhosted

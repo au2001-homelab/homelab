@@ -1,5 +1,8 @@
 ---
 ansible_user: debian
+
+zerotier_network_id: 233ccaac272c6186
+
 cluster_config: cluster.conf
 
 ha_enabled: true
