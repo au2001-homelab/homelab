@@ -2,6 +2,7 @@
 ansible_user: debian
 
 zerotier_network_id: 233ccaac272c6186
+zerotier_interface_name: ztr4n6ntnb
 
 cluster_config: cluster.conf
 
@@ -9,7 +10,15 @@ ha_enabled: true
 ha_cluster_method: external
 ha_cluster_vip: k8s.arl.sh
 
-install_k3s_server_args: --disable traefik
+default_k3s_agent_args:
+  --node-ip {{ zerotier_ipv4 }}
+  --flannel-iface {{ zerotier_interface_name }}
+
+default_k3s_server_args: "
+    {{ default_k3s_agent_args }}
+    --flannel-backend host-gw
+    --disable traefik
+  "
 
 ha_k3s_token: !vault |
   $ANSIBLE_VAULT;1.1;AES256
