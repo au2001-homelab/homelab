@@ -1,10 +1,10 @@
 ---
-install_k3s_server_args:
-  --disable traefik
-  --node-ip {{ zerotier_ipv4 }}
-  --node-external-ip {{ ansible_default_ipv4.address }}
-  --node-label k8s.arl.sh/type=cloud
-  --node-label k8s.arl.sh/cloud=ovh
-  --node-label k8s.arl.sh/cpu=intel-atom-n2800
-  --node-label k8s.arl.sh/bandwidth-up=100
-  --node-label k8s.arl.sh/bandwidth-down=100
+install_k3s_server_args: "
+    {{ default_k3s_server_args }}
+    --node-external-ip {{ ansible_default_ipv4.address }}
+    --node-label k8s.arl.sh/type=cloud
+    --node-label k8s.arl.sh/cloud=ovh
+    --node-label k8s.arl.sh/cpu=intel-atom-n2800
+    --node-label k8s.arl.sh/bandwidth-up=100
+    --node-label k8s.arl.sh/bandwidth-down=100
+  "
