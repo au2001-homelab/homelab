@@ -1,0 +1,2 @@
+---
+pci_gpu_filter: .*\bNVIDIA\b.*

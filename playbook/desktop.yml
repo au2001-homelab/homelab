@@ -8,30 +8,83 @@
 
 - name: Configure machines
   hosts: selfhosted
+  become: true
   tasks:
   - name: Install iptables
-    become: true
     apt:
       name: iptables
 
   - name: Disable SSH password authentication
-    become: true
     lineinfile:
       dest: /etc/ssh/sshd_config
       regexp: '^#?\s*PasswordAuthentication\b(.*)$'
-      line: "PasswordAuthentication no"
-      state: present
+      line: PasswordAuthentication no
     notify:
     - Reload sshd
 
   - name: Set hostname
-    become: true
     hostname:
       name: "{{ ansible_host }}"
 
+  - name: Update GRUB config for GPU passthrough
+    lineinfile:
+      dest: /etc/default/grub
+      regexp: '^#?\s*GRUB_CMDLINE_LINUX_DEFAULT\s*=(.*)$'
+      line: GRUB_CMDLINE_LINUX_DEFAULT="quiet amd_iommu=on iommu=pt"
+    notify:
+    - Rebuild GRUB config
+
+  - name: Load VFIO modules at boot
+    lineinfile:
+      dest: /etc/initramfs-tools/modules
+      regexp: '^#?\s*{{ item }}\b.*$'
+      line: "{{ item }}"
+    with_items:
+    - vfio_pci
+    - vfio
+    - vfio_iommu_type1
+    - vfio_virqfd
+    notify:
+    - Update initramfs
+
+  - name: List PCI devices
+    shell: lspci -nn
+    changed_when: false
+    register: lspci
+
+  - name: Get GPU device IDs
+    set_fact:
+      gpu_pci_ids: "{{ lspci.stdout_lines | map('regex_search', '^' + pci_gpu_filter + '\\[([0-9a-f:]+)\\]( \\([^)]+\\))?$', '\\1') | flatten }}"
+
+  - name: Replace GPU drivers with VFIO
+    copy:
+      dest: /etc/modprobe.d/vfio.conf
+      content: |
+        softdep amdgpu pre: vfio-pci
+        softdep radeon pre: vfio-pci
+        softdep nouveau pre: vfio-pci
+        softdep nvidia pre: vfio-pci
+        softdep snd_intel_hda pre: vfio-pci
+
+        options vfio-pci ids={{ gpu_pci_ids | join(',') }}
+    notify:
+    - Update initramfs
+
   handlers:
   - name: Reload sshd
-    become: true
     service:
       name: sshd
       state: reloaded
+
+  - name: Rebuild GRUB config
+    command: update-grub
+    notify:
+    - Reboot
+
+  - name: Update initramfs
+    command: update-initramfs -u
+    notify:
+    - Reboot
+
+  - name: Reboot
+    reboot:
