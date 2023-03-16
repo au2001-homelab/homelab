@@ -1,2 +1,5 @@
 ---
 pci_gpu_filter: .*\bNVIDIA\b.*
+
+storage_disks:
+- nvme0n1

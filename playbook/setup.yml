@@ -1,18 +1,33 @@
 ---
-- name: Install dependencies
-  hosts: selfhosted
+- name: Install Ansible dependencies
+  hosts: k3s_cluster
   gather_facts: false
   tasks:
+  - name: Update APT cache
+    raw: sudo apt-get update
+
   - name: Install Python3
     raw: sudo apt-get install -y python3
 
-- name: Configure machines
-  hosts: selfhosted
+- name: Install cluster dependencies
+  hosts: k3s_cluster
   become: true
   tasks:
   - name: Install iptables
     apt:
       name: iptables
+
+  - name: Install Open-iSCSI
+    apt:
+      name: open-iscsi
+
+  - name: Install NFSv4 client
+    apt:
+      name: nfs-common
+
+  - name: Install XFS
+    apt:
+      name: xfsprogs
 
   - name: Disable SSH password authentication
     lineinfile:
@@ -26,6 +41,44 @@
     hostname:
       name: "{{ ansible_host }}"
 
+  handlers:
+  - name: Reload sshd
+    service:
+      name: sshd
+      state: reloaded
+
+- name: Configure NAS machines
+  hosts:
+  - selfhosted
+  - nas
+  become: true
+  tasks:
+  - name: Format storage disks as XFS
+    filesystem:
+      dev: /dev/{{ item }}
+      force: true
+      fstype: xfs
+      resizefs: true
+    with_items: "{{ storage_disks }}"
+
+  - name: Create storage mount points
+    file:
+      path: /mnt/{{ item }}
+      state: directory
+    with_items: "{{ storage_disks }}"
+
+  - name: Mount storage disks
+    mount:
+      src: /dev/{{ item }}
+      path: /mnt/{{ item }}
+      fstype: xfs
+      state: mounted
+    with_items: "{{ storage_disks }}"
+
+- name: Configure self-hosted machines
+  hosts: selfhosted
+  become: true
+  tasks:
   - name: Update GRUB config for GPU passthrough
     lineinfile:
       dest: /etc/default/grub
@@ -71,11 +124,6 @@
     - Update initramfs
 
   handlers:
-  - name: Reload sshd
-    service:
-      name: sshd
-      state: reloaded
-
   - name: Rebuild GRUB config
     command: update-grub
     notify:

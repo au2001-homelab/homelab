@@ -9,3 +9,5 @@ install_k3s_agent_args: "
     --node-label k8s.arl.sh/bandwidth-up=700
     --node-label k8s.arl.sh/bandwidth-down=10000
   "
+
+storage_disks: []
