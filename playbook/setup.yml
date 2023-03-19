@@ -83,7 +83,7 @@
     lineinfile:
       dest: /etc/default/grub
       regexp: '^#?\s*GRUB_CMDLINE_LINUX_DEFAULT\s*=(.*)$'
-      line: GRUB_CMDLINE_LINUX_DEFAULT="quiet amd_iommu=on iommu=pt"
+      line: GRUB_CMDLINE_LINUX_DEFAULT="quiet amd_iommu=on iommu=pt video=efifb:off"
     notify:
     - Rebuild GRUB config
 
