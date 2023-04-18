@@ -4,7 +4,7 @@ install_k3s_agent_args: "
     --node-taint k8s.arl.sh/public=false:NoSchedule
     --node-taint k8s.arl.sh/preemptible=true:NoSchedule
     --node-label k8s.arl.sh/type=selfhosted
-    --node-label k8s.arl.sh/cpu=amd-ryzen-9-7950X
+    --node-label k8s.arl.sh/cpu=amd-ryzen-9-7950x
     --node-label k8s.arl.sh/gpu=geforce-rtx-3080-ti
     --node-label k8s.arl.sh/bandwidth-up=700
     --node-label k8s.arl.sh/bandwidth-down=10000
