@@ -18,6 +18,7 @@ default_k3s_server_args: "
     {{ default_k3s_agent_args }}
     --flannel-backend host-gw
     --disable traefik
+    --disable-helm-controller
   "
 
 ha_k3s_token: !vault |
