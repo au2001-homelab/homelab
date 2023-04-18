@@ -41,6 +41,15 @@
     hostname:
       name: "{{ ansible_host }}"
 
+  - name: Set timezone
+    timezone:
+      name: Europe/Paris
+      hwclock: UTC
+
+  - name: Install NTP client
+    apt:
+      name: systemd-timesyncd
+
   handlers:
   - name: Reload sshd
     service:
