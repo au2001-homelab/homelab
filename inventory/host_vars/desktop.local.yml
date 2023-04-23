@@ -2,4 +2,4 @@
 pci_passthrough_filter: .*\b(?:NVIDIA|Audio)\b.*
 
 storage_disks:
-- nvme0n1
+- nvme-WD_Green_SN350_2TB_213229455914
