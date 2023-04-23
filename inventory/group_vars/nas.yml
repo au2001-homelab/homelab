@@ -5,7 +5,8 @@ install_k3s_agent_args: "
     --node-label k8s.arl.sh/type=nas
     --node-label k8s.arl.sh/cpu=intel-core-i7-10700k
     --node-label k8s.arl.sh/bandwidth-up=700
-    --node-label k8s.arl.sh/bandwidth-down=10000
+    --node-label k8s.arl.sh/bandwidth-down=1000
+    --node-label openebs.io/engine=mayastor
   "
 
 storage_disks: []

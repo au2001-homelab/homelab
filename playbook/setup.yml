@@ -68,31 +68,29 @@
 
 - name: Configure NAS machines
   hosts:
-  - selfhosted
   - nas
   become: true
   tasks:
-  - name: Format storage disks as XFS
-    filesystem:
-      dev: /dev/{{ item }}
-      force: true
-      fstype: xfs
-      resizefs: true
+  - name: Add APT contrib repository
+    apt_repository:
+      filename: bullseye-contrib
+      repo: deb http://deb.debian.org/debian/ bullseye contrib
+
+  - name: Install ZFS
+    apt:
+      name: zfsutils-linux
+
+  - name: Load ZFS module
+    modprobe:
+      name: zfs
+
+  # TODO: Make idempotent
+  - name: Wipe storage disks
+    command: wipefs -a /dev/disk/by-id/{{ item }}
     with_items: "{{ storage_disks }}"
 
-  - name: Create storage mount points
-    file:
-      path: /mnt/{{ item }}
-      state: directory
-    with_items: "{{ storage_disks }}"
-
-  - name: Mount storage disks
-    mount:
-      src: /dev/{{ item }}
-      path: /mnt/{{ item }}
-      fstype: xfs
-      state: mounted
-    with_items: "{{ storage_disks }}"
+  - name: Create ZFS pool
+    command: zpool create zfs-nas {{ storage_disks | join(' ') }}
 
 - name: Configure self-hosted machines
   hosts: selfhosted
@@ -143,6 +141,28 @@
         options vfio-pci ids={{ pci_passthrough_ids | join(',') }}
     notify:
     - Update initramfs
+
+  - name: Format storage disks as XFS
+    filesystem:
+      dev: /dev/disk/by-id/{{ item }}
+      force: true
+      fstype: xfs
+      resizefs: true
+    with_items: "{{ storage_disks }}"
+
+  - name: Create storage mount points
+    file:
+      path: /mnt/{{ item }}
+      state: directory
+    with_items: "{{ storage_disks }}"
+
+  - name: Mount storage disks
+    mount:
+      src: /dev/disk/by-id/{{ item }}
+      path: /mnt/{{ item }}
+      fstype: xfs
+      state: mounted
+    with_items: "{{ storage_disks }}"
 
   handlers:
   - name: Rebuild GRUB config
