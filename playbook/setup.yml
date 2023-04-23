@@ -126,7 +126,7 @@
 
   - name: Get GPU device IDs
     set_fact:
-      gpu_pci_ids: "{{ lspci.stdout_lines | map('regex_search', '^' + pci_gpu_filter + '\\[([0-9a-f:]+)\\]( \\([^)]+\\))?$', '\\1') | flatten }}"
+      pci_passthrough_ids: "{{ lspci.stdout_lines | map('regex_search', '^' + pci_passthrough_filter + '\\[([0-9a-f:]+)\\]( \\([^)]+\\))?$', '\\1') | flatten }}"
 
   - name: Replace GPU drivers with VFIO
     copy:
@@ -136,9 +136,11 @@
         softdep radeon pre: vfio-pci
         softdep nouveau pre: vfio-pci
         softdep nvidia pre: vfio-pci
-        softdep snd_intel_hda pre: vfio-pci
+        softdep snd_hda_intel pre: vfio-pci
+        softdep xhci_hcd pre: vfio-pci
+        softdep xhci_pci pre: vfio-pci
 
-        options vfio-pci ids={{ gpu_pci_ids | join(',') }}
+        options vfio-pci ids={{ pci_passthrough_ids | join(',') }}
     notify:
     - Update initramfs
 

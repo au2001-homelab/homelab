@@ -1,5 +1,5 @@
 ---
-pci_gpu_filter: .*\bNVIDIA\b.*
+pci_passthrough_filter: .*\b(?:NVIDIA|Audio)\b.*
 
 storage_disks:
 - nvme0n1
