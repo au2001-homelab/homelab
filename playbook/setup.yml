@@ -150,6 +150,15 @@
     notify:
     - Update initramfs
 
+  - name: Disable game controllers' USB
+    copy:
+      dest: /etc/modprobe.d/usbhid.conf
+      content: |
+        options usbhid quirks=0x044f:0x0406:0x4 # Thrustmaster TCA Sidestick
+        options usbhid quirks=0x044f:0x0407:0x4 # Thrustmaster TCA Quadrant
+    notify:
+    - Update initramfs
+
   - name: Format storage disks as XFS
     filesystem:
       dev: /dev/disk/by-id/{{ item }}
