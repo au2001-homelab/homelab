@@ -1,6 +1,8 @@
 ---
 install_k3s_agent_args: "
     {{ default_k3s_agent_args }}
+    --kubelet-arg cpu-manager-policy=static
+    --kubelet-arg system-reserved=cpu=1
     --node-taint k8s.arl.sh/public=false:NoSchedule
     --node-taint k8s.arl.sh/preemptible=true:NoSchedule
     --node-label k8s.arl.sh/type=selfhosted
