@@ -96,7 +96,23 @@
   hosts: selfhosted
   become: true
   tasks:
-  - name: Update GRUB config for GPU passthrough
+  - name: Disable GRUB os-prober
+    lineinfile:
+      dest: /etc/default/grub
+      regexp: '^#?\s*GRUB_DISABLE_OS_PROBER\s*=(.*)$'
+      line: GRUB_DISABLE_OS_PROBER=true
+    notify:
+    - Rebuild GRUB config
+
+  - name: Disable GRUB menu
+    lineinfile:
+      dest: /etc/default/grub
+      regexp: '^#?\s*GRUB_TIMEOUT\s*=(.*)$'
+      line: GRUB_TIMEOUT=0
+    notify:
+    - Rebuild GRUB config
+
+  - name: Update Linux commandline for GPU passthrough
     lineinfile:
       dest: /etc/default/grub
       regexp: '^#?\s*GRUB_CMDLINE_LINUX_DEFAULT\s*=(.*)$'
