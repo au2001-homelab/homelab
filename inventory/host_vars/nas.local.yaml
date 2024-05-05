@@ -5,3 +5,6 @@ storage_disks:
 # - ata-Samsung_SSD_850_EVO_1TB_S2RFNX0H802036T
 # - ata-Samsung_SSD_850_EVO_250GB_S21PNSBG481921P
 # - ata-WDC_WD40EFAX-68JH4N0_WD-WX52D104LX1V
+
+wireguard_ipv4: 192.168.196.8
+wireguard_endpoint: x.arl.sh:51828
