@@ -1,0 +1,58 @@
+---
+- name: Setup WireGuard
+  hosts: k3s_cluster
+  become: true
+  tasks:
+  - name: Install WireGuard
+    apt:
+      name: wireguard
+
+  - name: Generate private key
+    shell: umask 077 && wg genkey > privatekey
+    args:
+      chdir: /etc/wireguard
+      creates: privatekey
+
+  - name: Read private key
+    slurp:
+      src: /etc/wireguard/privatekey
+    register: privatekey
+
+  - name: Store private key
+    set_fact:
+      wireguard_privatekey: "{{ privatekey.content | b64decode | replace('\n', '') }}"
+
+  - name: Derive public key
+    shell: wg pubkey < privatekey > publickey
+    args:
+      chdir: /etc/wireguard
+      creates: publickey
+
+  - name: Read public key
+    slurp:
+      src: /etc/wireguard/publickey
+    register: publickey
+
+  - name: Store public key
+    set_fact:
+      wireguard_publickey: "{{ publickey.content | b64decode | replace('\n', '') }}"
+
+  - name: Create config file
+    template:
+      src: ../templates/wireguard.j2
+      dest: /etc/wireguard/{{ wireguard_interface_name }}.conf
+      mode: "600"
+    notify:
+    - Restart wg-quick service
+
+  - name: Start wg-quick service
+    service:
+      name: wg-quick@{{ wireguard_interface_name }}
+      state: started
+      enabled: true
+
+  handlers:
+  - name: Restart wg-quick service
+    service:
+      name: wg-quick@{{ wireguard_interface_name }}
+      state: restarted

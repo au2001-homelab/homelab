@@ -3,3 +3,6 @@ pci_passthrough_filter: .*\b(?:NVIDIA|Audio)\b.*
 
 storage_disks:
 - nvme-WD_Green_SN350_2TB_213229455914
+
+wireguard_ipv4: 192.168.196.10
+wireguard_endpoint: x.arl.sh:51830

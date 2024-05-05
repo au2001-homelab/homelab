@@ -1,8 +1,7 @@
 ---
 ansible_user: debian
 
-zerotier_network_id: 233ccaac272c6186
-zerotier_interface_name: ztr4n6ntnb
+wireguard_interface_name: wg0
 
 cluster_config: cluster.conf
 
@@ -11,13 +10,12 @@ ha_cluster_method: external
 ha_cluster_vip: k8s.arl.sh
 
 default_k3s_agent_args: "
-    --node-ip {{ zerotier_ipv4 }}
-    --flannel-iface {{ zerotier_interface_name }}
+    --node-ip {{ wireguard_ipv4 }}
+    --flannel-iface {{ wireguard_interface_name }}
   "
 
 default_k3s_server_args: "
     {{ default_k3s_agent_args }}
-    --flannel-backend host-gw
     --disable traefik
     --disable-helm-controller
     --kube-apiserver-arg=enable-admission-plugins=PodTolerationRestriction
