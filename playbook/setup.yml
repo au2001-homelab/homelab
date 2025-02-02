@@ -60,11 +60,37 @@
       name: fs.inotify.max_user_instances
       value: 8192
 
+  - name: Load NVMe TCP module
+    modprobe:
+      name: nvme_tcp
+      persistent: present
+
+  - name: Load NVMe core module
+    modprobe:
+      name: nvme_core
+      persistent: present
+
+  - name: Enabling NVMe multipathing
+    copy:
+      dest: /etc/modprobe.d/nvme_core.conf
+      content: |
+        options nvme_core multipath=Y
+    notify:
+    - Update initramfs
+
   handlers:
   - name: Reload sshd
     service:
       name: sshd
       state: reloaded
+
+  - name: Update initramfs
+    command: update-initramfs -u
+    notify:
+    - Reboot
+
+  - name: Reboot
+    reboot:
 
 - name: Configure NAS machines
   hosts:
