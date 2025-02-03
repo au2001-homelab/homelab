@@ -111,12 +111,12 @@
       name: zfs
 
   # TODO: Make idempotent
-  - name: Wipe storage disks
-    command: wipefs -a /dev/disk/by-id/{{ item }}
-    with_items: "{{ storage_disks }}"
+  # - name: Wipe storage disks
+  #   command: wipefs -a /dev/disk/by-id/{{ item }}
+  #   with_items: "{{ storage_disks }}"
 
-  - name: Create ZFS pool
-    command: zpool create zfs-nas {{ storage_disks | join(' ') }}
+  # - name: Create ZFS pool
+  #   command: zpool create zfs-nas {{ storage_disks | join(' ') }}
 
 - name: Configure self-hosted machines
   hosts: selfhosted
