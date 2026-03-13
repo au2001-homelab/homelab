@@ -13,5 +13,10 @@ Endpoint = {{ hostvars[host].wireguard_endpoint }}
 {% endfor %}
 [Peer]
 # Name = airelien.local
-PublicKey = t1PtcXiYL6Fl3mzEExwmybK6AYGnGwSKlN/NxPdrAwo=
+PublicKey = ACGz9Ngt85srpTlx8PljYT8uxeH22PoSDZkWYUsinxc=
 AllowedIPs = 192.168.196.100/32
+
+[Peer]
+# Name = google-pixel.local
+PublicKey = abRFZPwLetDYZ16KT+sG1er8yqLZs5Wt0IopCvNgxQM=
+AllowedIPs = 192.168.196.101/32
