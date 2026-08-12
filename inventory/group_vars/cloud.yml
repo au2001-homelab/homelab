@@ -1,5 +1,5 @@
 ---
-install_k3s_server_args: "
+k3s_server_args_common: "
     {{ default_k3s_server_args }}
     --node-external-ip {{ ansible_default_ipv4.address }}
     --node-label svccontroller.k3s.cattle.io/enablelb=true
@@ -9,3 +9,17 @@ install_k3s_server_args: "
     --node-label k8s.arl.sh/bandwidth-up=100
     --node-label k8s.arl.sh/bandwidth-down=100
   "
+
+k3s_server_join_url: "https://{{ groups['k3s_server'][(groups['k3s_server'].index(inventory_hostname) + 1) % (groups['k3s_server'] | length)] }}:6443"
+
+install_k3s_server_args: "{{ k3s_server_args_common }} --server {{ k3s_server_join_url }}"
+
+server_init_args: >-
+  {% if ansible_host == first_server %}
+    --cluster-init
+    --tls-san {{ apiserver_endpoint }}
+  {% else %}
+    --server https://{{ first_server }}:6443
+  {% endif %}
+  --token {{ k3s_token }}
+  {{ k3s_server_args_common }}
