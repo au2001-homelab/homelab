@@ -2,6 +2,8 @@
 PrivateKey = {{ wireguard_privatekey }}
 Address = {{ wireguard_ipv4 }}/32
 ListenPort = 51820
+# 1420 = 1500 (physical path MTU) - 80 (WireGuard-over-IPv6 overhead)
+MTU = 1420
 
 {% for host in groups.k3s_cluster %}
 [Peer]
