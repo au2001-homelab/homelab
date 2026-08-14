@@ -8,3 +8,7 @@ storage_disks:
 
 wireguard_ipv4: 192.168.196.8
 wireguard_endpoint: x.arl.sh:51828
+
+wireguard_direct_interface: enp4s0
+wireguard_direct_address: 192.168.197.0/31
+wireguard_direct_endpoint: 192.168.197.0:51820
