@@ -11,6 +11,7 @@ MTU = 1420
 PublicKey = {{ hostvars[host].wireguard_publickey }}
 AllowedIPs = {{ hostvars[host].wireguard_ipv4 }}/32
 Endpoint = {{ hostvars[host].wireguard_endpoint }}
+PersistentKeepalive = 25
 
 {% endfor %}
 [Peer]
