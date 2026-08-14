@@ -10,7 +10,11 @@ MTU = 1420
 # Name = {{ host }}
 PublicKey = {{ hostvars[host].wireguard_publickey }}
 AllowedIPs = {{ hostvars[host].wireguard_ipv4 }}/32
+{% if wireguard_direct_endpoint is defined and hostvars[host].wireguard_direct_endpoint is defined %}
+Endpoint = {{ hostvars[host].wireguard_direct_endpoint }}
+{% else %}
 Endpoint = {{ hostvars[host].wireguard_endpoint }}
+{% endif %}
 PersistentKeepalive = 25
 
 {% endfor %}
