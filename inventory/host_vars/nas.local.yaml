@@ -7,7 +7,6 @@ storage_disks:
 # - ata-WDC_WD40EFAX-68JH4N0_WD-WX52D104LX1V
 
 wireguard_ipv4: 192.168.196.8
-wireguard_endpoint: x.arl.sh:51828
 
 wireguard_direct_interface: enp4s0
 wireguard_direct_address: 192.168.197.0/31
