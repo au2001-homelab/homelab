@@ -8,6 +8,7 @@ k3s_server_args_common: "
     --node-label k8s.arl.sh/cpu=intel-atom-n2800
     --node-label k8s.arl.sh/bandwidth-up=100
     --node-label k8s.arl.sh/bandwidth-down=100
+    --node-label node.longhorn.io/disable-v2-data-engine=true
   "
 
 k3s_server_join_url: "https://{{ groups['k3s_server'][(groups['k3s_server'].index(inventory_hostname) + 1) % (groups['k3s_server'] | length)] }}:6443"
