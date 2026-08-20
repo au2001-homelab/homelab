@@ -236,3 +236,46 @@
 
   - name: Reboot
     reboot:
+
+- name: Configure Longhorn v2 hosts
+  hosts:
+  - nas
+  - selfhosted
+  become: true
+  tasks:
+  - name: Reserve hugepages for SPDK
+    sysctl:
+      name: vm.nr_hugepages
+      value: '1024'
+      sysctl_file: /etc/sysctl.d/90-longhorn-v2.conf
+      sysctl_set: true
+      reload: true
+
+  - name: Load SPDK kernel modules at boot
+    copy:
+      dest: /etc/modules-load.d/longhorn-v2.conf
+      content: |
+        uio_pci_generic
+        vfio_pci
+      mode: '0644'
+
+  - name: Load SPDK kernel modules now
+    modprobe:
+      name: "{{ item }}"
+    with_items:
+    - uio_pci_generic
+    - vfio_pci
+
+  - name: Verify hugepages were actually allocated
+    command: cat /proc/meminfo
+    register: v2_meminfo
+    changed_when: false
+
+  - name: Fail if fewer than 1024 hugepages are available
+    assert:
+      that:
+      - (v2_meminfo.stdout | regex_search('HugePages_Total:\s+(\d+)', '\1') | first | int) >= 1024
+      fail_msg: >-
+        Only {{ v2_meminfo.stdout | regex_search('HugePages_Total:\s+(\d+)', '\1') | first }}
+        hugepages allocated on {{ inventory_hostname }}; the v2 data engine needs 1024.
+        Reboot to defragment memory, or move the reservation to the kernel command line.
