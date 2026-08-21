@@ -6,6 +6,9 @@ MTUBytes={{ wireguard_direct_mtu | default(1500) }}
 
 [Network]
 Address={{ wireguard_direct_address }}
+{% if lhstor_shim_address is defined %}
+MACVLAN=lhshim
+{% endif %}
 {% if wireguard_direct_peer is defined %}
 
 [Route]

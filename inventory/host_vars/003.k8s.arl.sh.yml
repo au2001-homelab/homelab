@@ -3,3 +3,8 @@ wireguard_ipv4: 192.168.196.3
 wireguard_endpoint: 003.k8s.arl.sh:51820
 
 pod_cidr: 10.42.2.0/24
+
+lhstor_mode: bridge
+lhstor_subnet: 192.168.199.128/26
+lhstor_gateway: 192.168.199.129
+lhstor_cidr: 192.168.199.128/26
