@@ -1,5 +1,8 @@
 [Match]
-Name={{ wireguard_direct_interface }}
+PermanentMACAddress={{ wireguard_direct_mac }}
+
+[Link]
+MTUBytes={{ wireguard_direct_mtu | default(1500) }}
 
 [Network]
 Address={{ wireguard_direct_address }}
