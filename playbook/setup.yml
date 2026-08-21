@@ -78,11 +78,61 @@
     notify:
     - Update initramfs
 
+  - name: Create Multus delegate directory
+    tags: [lhstor]
+    file:
+      path: /etc/cni/multus/net.d
+      state: directory
+      mode: "755"
+    when: lhstor_mode is defined
+
+  - name: Install Longhorn storage CNI delegate config
+    tags: [lhstor]
+    template:
+      src: ../templates/lhstor-cni.j2
+      dest: /etc/cni/multus/net.d/lhstor.conf
+      mode: "644"
+    when: lhstor_mode is defined
+
+  - name: Create lhshim macvlan netdev
+    tags: [lhstor]
+    template:
+      src: ../templates/lhshim.netdev.j2
+      dest: /etc/systemd/network/40-lhshim.netdev
+      mode: "644"
+    when: lhstor_shim_address is defined
+    notify:
+    - Reload systemd-networkd
+
+  - name: Configure lhshim interface
+    tags: [lhstor]
+    template:
+      src: ../templates/lhshim.network.j2
+      dest: /etc/systemd/network/40-lhshim.network
+      mode: "644"
+    when: lhstor_shim_address is defined
+    notify:
+    - Reload systemd-networkd
+
+  - name: Attach lhshim to the direct link
+    tags: [lhstor]
+    template:
+      src: ../templates/direct-link.j2
+      dest: /etc/systemd/network/40-direct.network
+      mode: "644"
+    when: wireguard_direct_interface is defined
+    notify:
+    - Reload systemd-networkd
+
   handlers:
   - name: Reload sshd
     service:
       name: sshd
       state: reloaded
+
+  - name: Reload systemd-networkd
+    command: networkctl reload
+    changed_when: true
 
   - name: Update initramfs
     command: update-initramfs -u

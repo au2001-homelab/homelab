@@ -1,0 +1,45 @@
+{% if lhstor_mode == 'macvlan' %}
+{
+  "cniVersion": "1.0.0",
+  "name": "lhstor",
+  "type": "macvlan",
+  "master": "{{ wireguard_direct_interface }}",
+  "mode": "bridge",
+  "mtu": 9000,
+  "ipam": {
+    "type": "host-local",
+    "ranges": [
+      [
+        {
+          "subnet": "{{ lhstor_subnet }}",
+          "rangeStart": "{{ lhstor_range_start }}",
+          "rangeEnd": "{{ lhstor_range_end }}"
+        }
+      ]
+    ]
+  }
+}
+{% else %}
+{
+  "cniVersion": "1.0.0",
+  "name": "lhstor",
+  "type": "bridge",
+  "bridge": "lhstor0",
+  "isGateway": true,
+  "mtu": 1420,
+  "ipam": {
+    "type": "host-local",
+    "ranges": [
+      [
+        {
+          "subnet": "{{ lhstor_subnet }}",
+          "gateway": "{{ lhstor_gateway }}"
+        }
+      ]
+    ],
+    "routes": [
+      { "dst": "192.168.199.0/24" }
+    ]
+  }
+}
+{% endif %}

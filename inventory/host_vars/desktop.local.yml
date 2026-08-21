@@ -12,3 +12,9 @@ wireguard_direct_peer: nas.local
 wireguard_direct_peer_address: 192.168.197.0
 
 pod_cidr: 10.42.3.0/24
+
+lhstor_mode: macvlan
+lhstor_subnet: 192.168.198.0/24
+lhstor_range_start: 192.168.198.16
+lhstor_range_end: 192.168.198.31
+lhstor_shim_address: 192.168.198.10/24

@@ -10,3 +10,9 @@ wireguard_direct_peer: desktop.local
 wireguard_direct_peer_address: 192.168.197.1
 
 pod_cidr: 10.42.4.0/24
+
+lhstor_mode: macvlan
+lhstor_subnet: 192.168.198.0/24
+lhstor_range_start: 192.168.198.32
+lhstor_range_end: 192.168.198.47
+lhstor_shim_address: 192.168.198.8/24
