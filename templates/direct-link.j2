@@ -6,3 +6,9 @@ MTUBytes={{ wireguard_direct_mtu | default(1500) }}
 
 [Network]
 Address={{ wireguard_direct_address }}
+{% if wireguard_direct_peer is defined %}
+
+[Route]
+Destination={{ hostvars[wireguard_direct_peer].pod_cidr }}
+Gateway={{ wireguard_direct_peer_address }}
+{% endif %}

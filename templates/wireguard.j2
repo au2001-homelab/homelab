@@ -9,7 +9,7 @@ MTU = 1420
 [Peer]
 # Name = {{ host }}
 PublicKey = {{ hostvars[host].wireguard_publickey }}
-AllowedIPs = {{ hostvars[host].wireguard_ipv4 }}/32, {{ hostvars[host].pod_cidr }}
+AllowedIPs = {{ hostvars[host].wireguard_ipv4 }}/32{{ ', ' ~ hostvars[host].pod_cidr if host != inventory_hostname and host != wireguard_direct_peer | default('') else '' }}
 {% if wireguard_direct_endpoint is defined and hostvars[host].wireguard_direct_endpoint is defined %}
 Endpoint = {{ hostvars[host].wireguard_direct_endpoint }}
 {% elif hostvars[host].wireguard_endpoint is defined %}
