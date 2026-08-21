@@ -16,6 +16,7 @@ default_k3s_agent_args: "
 
 default_k3s_server_args: "
     {{ default_k3s_agent_args }}
+    --flannel-backend=host-gw
     --disable traefik
     --disable-helm-controller
     --kube-apiserver-arg=enable-admission-plugins=PodTolerationRestriction
