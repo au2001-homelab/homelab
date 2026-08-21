@@ -8,6 +8,8 @@
 
 wireguard_ipv4: 192.168.196.8
 
-wireguard_direct_interface: enp4s0
+wireguard_direct_interface: enp1s0
+wireguard_direct_mac: 98:b7:85:8a:1c:ae
+wireguard_direct_mtu: 9000
 wireguard_direct_address: 192.168.197.0/31
 wireguard_direct_endpoint: 192.168.197.0:51820

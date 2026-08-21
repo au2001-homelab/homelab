@@ -6,6 +6,8 @@ storage_disks:
 
 wireguard_ipv4: 192.168.196.10
 
-wireguard_direct_interface: eno1
+wireguard_direct_interface: enp5s0
+wireguard_direct_mac: 98:b7:85:21:e9:63
+wireguard_direct_mtu: 9000
 wireguard_direct_address: 192.168.197.1/31
 wireguard_direct_endpoint: 192.168.197.1:51820
