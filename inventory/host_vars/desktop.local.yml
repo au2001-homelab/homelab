@@ -11,3 +11,5 @@ wireguard_direct_mac: 98:b7:85:21:e9:63
 wireguard_direct_mtu: 9000
 wireguard_direct_address: 192.168.197.1/31
 wireguard_direct_endpoint: 192.168.197.1:51820
+
+pod_cidr: 10.42.3.0/24
