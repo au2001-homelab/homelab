@@ -16,3 +16,10 @@ lhstor_subnet: 192.168.198.0/24
 lhstor_range_start: 192.168.198.32
 lhstor_range_end: 192.168.198.47
 lhstor_shim_address: 192.168.198.8/24
+
+longhorn_raid_name: longhorn0
+longhorn_raid_level: 0
+longhorn_raid_chunk: 128
+longhorn_raid_members:
+- /dev/disk/by-id/nvme-CT4000P3PSSD8_2330E8624428
+- /dev/disk/by-id/nvme-CT4000P3PSSD8_2304E6A22B33
