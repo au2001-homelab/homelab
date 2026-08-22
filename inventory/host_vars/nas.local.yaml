@@ -11,6 +11,9 @@ wireguard_direct_peer_address: 192.168.197.1
 
 pod_cidr: 10.42.4.0/24
 
+lan_mac: b4:2e:99:ff:3c:36
+lan_address: 192.168.195.8/24
+
 lhstor_mode: macvlan
 lhstor_subnet: 192.168.198.0/24
 lhstor_range_start: 192.168.198.32

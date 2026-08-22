@@ -94,6 +94,16 @@
       mode: "644"
     when: lhstor_mode is defined
 
+  - name: Configure the wired LAN interface
+    tags: [lan]
+    template:
+      src: ../templates/lan.j2
+      dest: /etc/systemd/network/30-lan.network
+      mode: "644"
+    when: lan_mac is defined
+    notify:
+    - Reload systemd-networkd
+
   - name: Create lhshim macvlan netdev
     tags: [lhstor]
     template:
