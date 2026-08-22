@@ -249,6 +249,88 @@
   - name: Reboot
     reboot:
 
+- name: Assemble Longhorn storage array
+  hosts: nas
+  become: true
+  tags: [raid]
+  tasks:
+  - name: Configure the Longhorn array
+    when: longhorn_raid_members is defined
+    block:
+    - name: Install mdadm
+      apt:
+        name: mdadm
+
+    - name: Check whether the array is already assembled
+      stat:
+        path: /dev/md/{{ longhorn_raid_name }}
+      register: longhorn_raid
+
+    - name: Inspect signatures on the array members
+      command: wipefs --noheadings --output TYPE {{ item }}
+      loop: "{{ longhorn_raid_members }}"
+      register: longhorn_raid_signatures
+      changed_when: false
+      check_mode: false
+      when: not longhorn_raid.stat.exists
+
+    - name: Classify the array members
+      set_fact:
+        longhorn_raid_blank: "{{ longhorn_raid_signatures.results | map(attribute='stdout')
+          | map('trim') | select('equalto', '') | list | length }}"
+        longhorn_raid_assembled: "{{ longhorn_raid_signatures.results | map(attribute='stdout')
+          | map('trim') | select('equalto', 'linux_raid_member') | list | length }}"
+      when: not longhorn_raid.stat.exists
+
+    - name: Refuse to build the array over existing data
+      assert:
+        that:
+        - longhorn_raid_blank | int == longhorn_raid_members | length or
+          longhorn_raid_assembled | int == longhorn_raid_members | length
+        fail_msg: >-
+          Members of {{ longhorn_raid_name }} carry mismatched signatures
+          ({{ longhorn_raid_signatures.results | map(attribute='stdout') | map('trim') | join(', ') }}).
+          Identify each disk by serial and clear it by hand before rerunning.
+      when: not longhorn_raid.stat.exists
+
+    - name: Assemble the existing array
+      command: mdadm --assemble /dev/md/{{ longhorn_raid_name }} {{ longhorn_raid_members | join(' ') }}
+      when:
+      - not longhorn_raid.stat.exists
+      - longhorn_raid_assembled | int == longhorn_raid_members | length
+
+    - name: Create the array
+      command: >-
+        mdadm --create /dev/md/{{ longhorn_raid_name }}
+        --level={{ longhorn_raid_level }}
+        --chunk={{ longhorn_raid_chunk }}
+        --name={{ longhorn_raid_name }}
+        --raid-devices={{ longhorn_raid_members | length }}
+        --run {{ longhorn_raid_members | join(' ') }}
+      when:
+      - not longhorn_raid.stat.exists
+      - longhorn_raid_blank | int == longhorn_raid_members | length
+
+    - name: Read the array UUID
+      command: mdadm --detail --export /dev/md/{{ longhorn_raid_name }}
+      register: longhorn_raid_detail
+      changed_when: false
+      check_mode: false
+
+    - name: Record the array in mdadm.conf
+      lineinfile:
+        path: /etc/mdadm/mdadm.conf
+        regexp: '^ARRAY /dev/md/{{ longhorn_raid_name }}\s'
+        line: >-
+          ARRAY /dev/md/{{ longhorn_raid_name }} metadata=1.2
+          UUID={{ longhorn_raid_detail.stdout | regex_search('MD_UUID=(\S+)', '\1') | first }}
+      notify:
+      - Update initramfs
+
+  handlers:
+  - name: Update initramfs
+    command: update-initramfs -u
+
 - name: Configure Longhorn v2 hosts
   hosts:
   - nas
