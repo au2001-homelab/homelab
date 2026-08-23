@@ -18,7 +18,7 @@
   - name: Install Flux CLI
     homebrew:
       update_homebrew: true
-      name: fluxcd/tap/flux
+      name: fluxcd
       state: latest
 
   - name: Write temporary private key
