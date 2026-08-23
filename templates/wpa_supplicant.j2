@@ -1,0 +1,15 @@
+ctrl_interface=DIR=/run/wpa_supplicant GROUP=netdev
+update_config=1 # wpa_cli save_config overwrites this file
+
+network={
+    ssid="{{ wifi_ssid }}"
+    psk="{{ wifi_psk }}"
+    bssid={{ wifi_bssid }}
+    priority=10
+}
+
+network={
+    ssid="{{ wifi_ssid }}"
+    psk="{{ wifi_psk }}"
+    priority=1
+}

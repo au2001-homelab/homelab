@@ -134,7 +134,48 @@
     notify:
     - Reload systemd-networkd
 
+  - name: Pin Wi-Fi to access point
+    tags: [wifi]
+    template:
+      src: ../templates/wpa_supplicant.j2
+      dest: /etc/wpa_supplicant/wpa_supplicant-wifi.conf
+      mode: "600"
+    when: wifi_bssid is defined
+    notify:
+    - Restart wpa_supplicant
+
+  - name: Install Wi-Fi tooling
+    tags: [wifi]
+    apt:
+      name: iw
+    when: wifi_bssid is defined
+
+  - name: Disable Wi-Fi power save
+    tags: [wifi]
+    copy:
+      dest: /etc/udev/rules.d/70-wifi-powersave.rules
+      content: |
+        ACTION=="add", SUBSYSTEM=="net", ENV{DEVTYPE}=="wlan", RUN+="/usr/sbin/iw dev $name set power_save off"
+      mode: "644"
+    when: wifi_bssid is defined
+    notify:
+    - Reload udev rules
+    - Apply Wi-Fi power save
+
   handlers:
+  - name: Reload udev rules
+    command: udevadm control --reload-rules
+    changed_when: true
+
+  - name: Apply Wi-Fi power save
+    command: /usr/sbin/iw dev wifi set power_save off
+    changed_when: true
+
+  - name: Restart wpa_supplicant
+    service:
+      name: wpa_supplicant@wifi
+      state: restarted
+
   - name: Reload sshd
     service:
       name: sshd
