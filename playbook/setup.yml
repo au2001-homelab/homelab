@@ -53,28 +53,29 @@
   - name: Increase max_user_watches
     sysctl:
       name: fs.inotify.max_user_watches
-      value: 524288
+      value: '553857'
+      sysctl_file: /etc/sysctl.d/90-inotify.conf
+      sysctl_set: true
+      reload: true
 
   - name: Increase max_user_instances
     sysctl:
       name: fs.inotify.max_user_instances
-      value: 8192
+      value: '8192'
+      sysctl_file: /etc/sysctl.d/90-inotify.conf
+      sysctl_set: true
+      reload: true
 
   - name: Load NVMe TCP module
     modprobe:
       name: nvme_tcp
       persistent: present
 
-  - name: Load NVMe core module
+  - name: Enable NVMe multipathing
     modprobe:
       name: nvme_core
+      params: multipath=Y
       persistent: present
-
-  - name: Enabling NVMe multipathing
-    copy:
-      dest: /etc/modprobe.d/nvme_core.conf
-      content: |
-        options nvme_core multipath=Y
     notify:
     - Update initramfs
 
