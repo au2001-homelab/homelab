@@ -370,12 +370,14 @@
       check_mode: false
 
     - name: Record the array in mdadm.conf
+      vars:
+        longhorn_raid_uuid: "{{ longhorn_raid_detail.stdout | regex_search('MD_UUID=(\\S+)', '\\1') | first }}"
       lineinfile:
         path: /etc/mdadm/mdadm.conf
         regexp: '^ARRAY /dev/md/{{ longhorn_raid_name }}\s'
         line: >-
           ARRAY /dev/md/{{ longhorn_raid_name }} metadata=1.2
-          UUID={{ longhorn_raid_detail.stdout | regex_search('MD_UUID=(\S+)', '\1') | first }}
+          UUID={{ longhorn_raid_uuid }}
       notify:
       - Update initramfs
 
@@ -418,10 +420,12 @@
     changed_when: false
 
   - name: Fail if fewer than 1024 hugepages are available
+    vars:
+      hugepages_total: "{{ v2_meminfo.stdout | regex_search('HugePages_Total:\\s+(\\d+)', '\\1') | first | int }}"
     assert:
       that:
-      - (v2_meminfo.stdout | regex_search('HugePages_Total:\s+(\d+)', '\1') | first | int) >= 1024
+      - hugepages_total | int >= 1024
       fail_msg: >-
-        Only {{ v2_meminfo.stdout | regex_search('HugePages_Total:\s+(\d+)', '\1') | first }}
+        Only {{ hugepages_total }}
         hugepages allocated on {{ inventory_hostname }}; the v2 data engine needs 1024.
         Reboot to defragment memory, or move the reservation to the kernel command line.
