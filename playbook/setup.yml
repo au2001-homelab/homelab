@@ -201,8 +201,8 @@
   tasks:
   - name: Add APT contrib repository
     apt_repository:
-      filename: bullseye-contrib
-      repo: deb http://deb.debian.org/debian/ bullseye contrib
+      filename: trixie-contrib
+      repo: deb http://deb.debian.org/debian/ trixie contrib
 
 - name: Configure self-hosted machines
   hosts: selfhosted
@@ -228,7 +228,7 @@
     lineinfile:
       dest: /etc/default/grub
       regexp: '^#?\s*GRUB_CMDLINE_LINUX_DEFAULT\s*=(.*)$'
-      line: GRUB_CMDLINE_LINUX_DEFAULT="quiet amd_iommu=on iommu=pt video=efifb:off"
+      line: GRUB_CMDLINE_LINUX_DEFAULT="quiet iommu=pt video=efifb:off"
     notify:
     - Rebuild GRUB config
 
@@ -241,7 +241,6 @@
     - vfio_pci
     - vfio
     - vfio_iommu_type1
-    - vfio_virqfd
     notify:
     - Update initramfs
 
