@@ -2,7 +2,7 @@
 flux_interval: 1h
 flux_path: ./cluster/
 
-flux_git_url: ssh://git@github.com/arl-sh/k8s-flux.git
+flux_git_url: ssh://git@github.com/au2001-homelab/k8s-flux.git
 flux_git_private_key: !vault |
   $ANSIBLE_VAULT;1.1;AES256
   30643163343534626161656564643761326634303861393732343263356135643134663061383930
