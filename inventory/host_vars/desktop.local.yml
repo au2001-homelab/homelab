@@ -1,5 +1,7 @@
 ---
 pci_passthrough_filter: .*\b(?:NVIDIA|Audio)\b.*
+pci_passthrough_extra_ids:
+- "1022:15b7"
 
 wireguard_ipv4: 192.168.196.10
 
