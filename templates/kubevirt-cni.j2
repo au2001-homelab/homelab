@@ -1,0 +1,27 @@
+{
+  "cniVersion": "1.0.0",
+  "name": "kubevirt",
+  "type": "bridge",
+  "bridge": "kubevirt0",
+  "isGateway": true,
+  "mtu": {{ kubevirt_mtu }},
+  "ipam": {
+    "type": "host-local",
+    "ranges": [
+      [
+        {
+          "subnet": "{{ kubevirt_subnet }}",
+          "rangeStart": "{{ kubevirt_address }}",
+          "rangeEnd": "{{ kubevirt_address }}",
+          "gateway": "{{ kubevirt_gateway }}"
+        }
+      ]
+    ],
+    "routes": [
+      { "dst": "0.0.0.0/0" }
+    ]
+  },
+  "dns": {
+    "nameservers": {{ kubevirt_nameservers | to_json }}
+  }
+}

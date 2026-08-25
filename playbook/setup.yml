@@ -95,6 +95,51 @@
       mode: "644"
     when: lhstor_mode is defined
 
+  - name: Install KubeVirt VM CNI delegate config
+    tags: [kubevirt]
+    template:
+      src: ../templates/kubevirt-cni.j2
+      dest: /etc/cni/multus/net.d/kubevirt.conf
+      mode: "644"
+    when: kubevirt_subnet is defined
+
+  - name: Create nftables drop-in directory
+    tags: [kubevirt]
+    file:
+      path: /etc/nftables.d
+      state: directory
+      mode: "755"
+    when: kubevirt_subnet is defined
+
+  - name: Install KubeVirt VM NAT ruleset
+    tags: [kubevirt]
+    template:
+      src: ../templates/kubevirt-nat.j2
+      dest: /etc/nftables.d/kubevirt.nft
+      mode: "644"
+    when: kubevirt_subnet is defined
+    notify:
+    - Reload kubevirt NAT
+
+  - name: Install KubeVirt VM NAT unit
+    tags: [kubevirt]
+    template:
+      src: ../templates/kubevirt-nat.service.j2
+      dest: /etc/systemd/system/kubevirt-nat.service
+      mode: "644"
+    when: kubevirt_subnet is defined
+    notify:
+    - Reload kubevirt NAT
+
+  - name: Enable KubeVirt VM NAT
+    tags: [kubevirt]
+    systemd:
+      name: kubevirt-nat
+      enabled: true
+      state: started
+      daemon_reload: true
+    when: kubevirt_subnet is defined
+
   - name: Configure the wired LAN interface
     tags: [lan]
     template:
@@ -185,6 +230,12 @@
   - name: Reload systemd-networkd
     command: networkctl reload
     changed_when: true
+
+  - name: Reload kubevirt NAT
+    systemd:
+      name: kubevirt-nat
+      state: restarted
+      daemon_reload: true
 
   - name: Update initramfs
     command: update-initramfs -u

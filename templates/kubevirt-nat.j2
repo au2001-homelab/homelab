@@ -1,0 +1,21 @@
+#!/usr/sbin/nft -f
+
+table ip kubevirt
+delete table ip kubevirt
+
+table ip kubevirt {
+	chain postrouting {
+		type nat hook postrouting priority srcnat + 10; policy accept;
+		ip saddr {{ kubevirt_subnet }} oifname != "kubevirt0" masquerade
+	}
+
+	chain prerouting {
+		type nat hook prerouting priority dstnat - 10; policy accept;
+{% for port in kubevirt_forward_tcp %}
+		iifname "{{ kubevirt_uplink }}" tcp dport {{ port }} dnat to {{ kubevirt_address }}
+{% endfor %}
+{% for port in kubevirt_forward_udp %}
+		iifname "{{ kubevirt_uplink }}" udp dport {{ port }} dnat to {{ kubevirt_address }}
+{% endfor %}
+	}
+}

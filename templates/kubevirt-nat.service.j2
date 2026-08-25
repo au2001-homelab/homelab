@@ -1,0 +1,13 @@
+[Unit]
+Description=NAT and port forwarding for the KubeVirt VM bridge
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/sbin/nft -f /etc/nftables.d/kubevirt.nft
+ExecStop=/usr/sbin/nft delete table ip kubevirt
+
+[Install]
+WantedBy=multi-user.target

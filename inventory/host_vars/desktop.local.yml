@@ -18,6 +18,16 @@ pod_cidr: 10.42.3.0/24
 lan_mac: c8:7f:54:50:fd:c3
 lan_address: 192.168.195.10/24
 
+kubevirt_subnet: 192.168.200.0/24
+kubevirt_gateway: 192.168.200.1
+kubevirt_address: 192.168.200.10
+kubevirt_mtu: 1500
+kubevirt_uplink: wifi
+kubevirt_nameservers:
+- 192.168.1.1
+kubevirt_forward_tcp: [47984, 47989, 48010]
+kubevirt_forward_udp: [47998, 47999, 48000, 48002, 48010]
+
 lhstor_mode: macvlan
 lhstor_subnet: 192.168.198.0/24
 lhstor_range_start: 192.168.198.16
