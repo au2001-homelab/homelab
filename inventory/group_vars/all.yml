@@ -9,6 +9,8 @@ ha_enabled: true
 ha_cluster_method: external
 ha_cluster_vip: k8s.arl.sh
 
+nodelocal_dns_ip: 169.254.20.10
+
 default_k3s_agent_args: "
     --node-ip {{ wireguard_ipv4 }}
     --flannel-iface {{ wireguard_interface_name }}
