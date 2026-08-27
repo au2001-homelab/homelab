@@ -150,6 +150,17 @@
     notify:
     - Reload systemd-networkd
 
+  - name: Enable Wake-on-LAN on the wired LAN interface
+    tags: [lan]
+    template:
+      src: ../templates/lan.link.j2
+      dest: /etc/systemd/network/30-lan.link
+      mode: "644"
+    when: lan_mac is defined
+    notify:
+    - Reload udev rules
+    - Reapply LAN link settings
+
   - name: Create lhshim macvlan netdev
     tags: [lhstor]
     template:
@@ -177,6 +188,16 @@
       dest: /etc/systemd/network/40-direct.network
       mode: "644"
     when: wireguard_direct_interface is defined
+    notify:
+    - Reload systemd-networkd
+
+  - name: Configure the Wi-Fi interface
+    tags: [wifi]
+    template:
+      src: ../templates/wlan.j2
+      dest: /etc/systemd/network/30-wlan.network
+      mode: "644"
+    when: wifi_bssid is defined
     notify:
     - Reload systemd-networkd
 
@@ -211,6 +232,10 @@
   handlers:
   - name: Reload udev rules
     command: udevadm control --reload-rules
+    changed_when: true
+
+  - name: Reapply LAN link settings
+    command: udevadm trigger --action=add --subsystem-match=net --attr-match=address={{ lan_mac }}
     changed_when: true
 
   - name: Apply Wi-Fi power save
