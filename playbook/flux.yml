@@ -15,6 +15,18 @@
         data:
           sops.asc: "{{ flux_sops_private_key | b64encode }}"
 
+  - name: Create Git authors secret
+    kubernetes.core.k8s:
+      kubeconfig: ../k3s-ansible/playbook/{{ cluster_config }}
+      definition:
+        apiVersion: v1
+        kind: Secret
+        metadata:
+          name: git-authors
+          namespace: flux-system
+        type: Opaque
+        stringData: "{{ flux_git_authors }}"
+
   - name: Install Flux CLI
     homebrew:
       update_homebrew: true
