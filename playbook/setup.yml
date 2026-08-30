@@ -21,6 +21,12 @@
     apt:
       name: open-iscsi
 
+  - name: Enable Open-iSCSI
+    service:
+      name: iscsid
+      state: started
+      enabled: true
+
   - name: Install NFSv4 client
     apt:
       name: nfs-common
