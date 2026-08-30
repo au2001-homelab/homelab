@@ -25,3 +25,7 @@ server_init_args: >-
   {% endif %}
   --token {{ k3s_token }}
   {{ k3s_server_args_common }}
+
+lhstor_mode: bridge
+lhstor_unreachable:
+- 192.168.198.0/24
