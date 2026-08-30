@@ -1,6 +1,6 @@
 ---
 wireguard_ipv4: 192.168.196.1
-wireguard_endpoint: 001.k8s.arl.sh:51820
+wireguard_endpoint: 51.255.45.96:51820
 
 pod_cidr: 10.42.0.0/24
 

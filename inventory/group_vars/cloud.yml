@@ -6,9 +6,9 @@ k3s_server_args_common: "
     --node-label svccontroller.k3s.cattle.io/lbpool=cloud
     --node-label k8s.arl.sh/type=cloud
     --node-label k8s.arl.sh/cloud=ovh
-    --node-label k8s.arl.sh/cpu=intel-atom-n2800
-    --node-label k8s.arl.sh/bandwidth-up=100
-    --node-label k8s.arl.sh/bandwidth-down=100
+    --node-label k8s.arl.sh/cpu=intel-haswell
+    --node-label k8s.arl.sh/bandwidth-up=500
+    --node-label k8s.arl.sh/bandwidth-down=500
     --node-label node.longhorn.io/disable-v2-data-engine=true
   "
 
