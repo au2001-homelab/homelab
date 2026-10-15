@@ -409,6 +409,8 @@ flux_sops_private_key: !vault |
   3366303838613230313263363832393335343239616638393563
 
 flux_git_authors:
+  fluxcdbot.sshpub: |
+    ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIERxNbXlXShhdPCb3xlteItueAzlNEFJdhgniq1iNgHK
   airelien.sshpub: |
     ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBNPrVzYYadKNvkgQxCnXOJFEVHFaHwiTWadroPV3QVO4f6Y2XW/4uJjNxOzHuz7VwnhqB8mYEPXFyXKYpAXWbL0=
   github.asc: |
